@@ -2,10 +2,10 @@ use std::fs::File;
 use std::io::{self, BufRead, BufReader};
 use std::path::Path;
 
-pub fn parse<P: AsRef<Path>>(path: P) -> io::Result<Vec<(char, u32)>> {
+pub fn parse<P: AsRef<Path>>(path: P) -> io::Result<Vec<(char, i32)>> {
     let file = File::open(path)?;
     let reader = BufReader::new(file);
-    let mut result = Vec::new();
+    let mut result: Vec<(char, i32)> = Vec::new();
 
     for line in reader.lines() {
         let line = line?;
@@ -13,7 +13,7 @@ pub fn parse<P: AsRef<Path>>(path: P) -> io::Result<Vec<(char, u32)>> {
 
         let mut chars = line.chars();
         let dir = chars.next().unwrap();
-        let value: u32 = chars.as_str().parse().unwrap();
+        let value: i32 = chars.as_str().parse().unwrap();
 
         result.push((dir, value));
     }
@@ -21,7 +21,7 @@ pub fn parse<P: AsRef<Path>>(path: P) -> io::Result<Vec<(char, u32)>> {
     Ok(result)
 }
 
-pub fn part1(input: &[(char, u32)]) -> u32 {
+pub fn part1(input: &[(char, i32)]) -> u32 {
     let mut dial: i32 = 50;
     let mut result = 0;
 
@@ -42,21 +42,22 @@ pub fn part1(input: &[(char, u32)]) -> u32 {
     result
 }
 
-pub fn part2(input: &[(char, u32)]) -> i32 {
+pub fn part2(input: &[(char, i32)]) -> i32 {
     let mut dial: i32 = 50;
     let mut result: i32 = 0;
 
     for &(dir, steps) in input {
-        for _ in 0..steps {
-            match dir {
-                'R' => dial = (dial + 1) % 100,
-                'L' => dial = (dial + 99) % 100,
-                _ => {}
+        match dir {
+            'R' => {
+                result += (dial + steps) / 100;
+                dial = (dial + steps) % 100;
             }
-
-            if dial == 0 {
-                result += 1;
+            'L' => {
+                let reversed = (100 - dial) % 100;
+                result += (reversed + steps) / 100;
+                dial = (dial - steps).rem_euclid(100);
             }
+            _ => {}
         }
     }
 

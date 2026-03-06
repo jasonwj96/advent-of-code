@@ -22,7 +22,10 @@ fn main() {
             let input = year2025::day01::parse(input_path).unwrap();
             println!("Year {}, day {}, Part 1: {}",args.year, args.day, year2025::day01::part1(&input));
             println!("Year {}, day {}, Part 2: {}",args.year, args.day, year2025::day01::part2(&input));
-        }
+        },
+        (2025, 2) => {
+            let input = year2025::day01::parse(input_path).unwrap();
+        },
         _ => panic!("Solution not implemented."),
     }
 }
